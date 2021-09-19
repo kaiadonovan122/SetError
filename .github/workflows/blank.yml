@@ -1,0 +1,44 @@
+Local $aFileRead
+ If FileExists($ISC_FileName) Then
+  Local $ISC_fHnd = FileOpen($ISC_FileName, 0)
+  If $ISC_fHnd = -1 Then
+   Return SetError(2, 0, 0)
+  EndIf
+  Local $Return = _FileReadToArray($ISC_FileName, $aFileRead)
+  If $Return = 0 Then
+   Return SetError(2, 0, 0)
+  EndIf
+  Local $aSectionNames = IniReadSectionNames($ISC_FileName)
+  If @error Then
+   Return SetError(3, 0, 0)
+  EndIf
+  If $ISC_All = 1 Then
+   For $I = $aFileRead[0] To 1 Step -1
+    If StringLeft($aFileRead[$I], 1) = ";" Then
+     _ArrayDelete($aFileRead, $I)
+    EndIf
+   Next
+   _ArrayDelete($aFileRead, 0)
+   _FileWriteFromArray($ISC_FileName, $aFileRead)
+   Return 1
+  EndIf
+  If _ArraySearch($aSectionNames, $ISC_SectionName) < 0 Or $ISC_SectionName = "" Then
+   Return SetError(4, 0, 0)
+  EndIf
+  Local $aSectionNames = IniReadSectionNames($ISC_FileName)
+  If @error Then
+   Return SetError(3, 0, 0)
+  EndIf
+  If _ArraySearch($aSectionNames, $ISC_SectionName) < 0 Then
+   Return SetError(4, 0, 0)
+  EndIf
+  Local $ISC_Index = _ArraySearch($aFileRead, "[" & $ISC_SectionName & "]")
+  Local $aHolder[$aFileRead[0] + 1]
+  If $ISC_ForeAft Then
+   For $I = 0 To $ISC_Index - 1
+    $aHolder[$I] = $aFileRead[$I]
+   Next
+   For $I = $ISC_Index - 1 To 0 Step -1
+    If StringLeft($aHolder[$I], 1) = ";" Then
+     _ArrayDelete($aHolder, $I)
+     _ArrayDelete($aFileRead, $I)
