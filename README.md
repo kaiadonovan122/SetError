@@ -1,0 +1,2 @@
+# SetError
+Func _IniWriteSectionComment($IWSC_FileName, $IWSC_SectionName, $IWSC_Comment, $IWSC_ForeAft = 1)  Local $aFileRead  If FileExists($IWSC_FileName) Then   Local $IWSC_fHnd = FileOpen($IWSC_FileName, 0)   If $IWSC_fHnd = -1 Then    Return SetError(2, 0, 0)   EndIf   Local $Return = _FileReadToArray($IWSC_FileName, $aFileRead)   If $Return = 0 Then    Return SetError(2, 0, 0)   EndIf   Local $aSectionNames = IniReadSectionNames($IWSC_FileName)   If @error Then    Return SetError(3, 0, 0)   EndIf   If _ArraySearch($aSectionNames, $IWSC_SectionName) &lt; 0 Then
